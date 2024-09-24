@@ -10,26 +10,29 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.Actions;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
-import Enum.DropdownOption;
+import Enum.PASSVALUE;
+import Enum.XPATHVALUES;
+import Enum.XPATH;
 import static org.junit.Assert.assertEquals;
 
 public class Soadmin {
     private WebDriver driver;
-    private static final String INPUT_NAME_XPATH = "//input[@name='%s']";
-    private static final String SELECT_TYPE_ID = "//div[contains(text(),'%s')]";
-    private static final String BUTTON_XPATH = "//button[contains(text(),'%s')]";
-    private static final String ROW_LOCATOR = "(//tr[@class=\"MuiTableRow-root css-1q1u3t4-MuiTableRow-root\"]//td)[%s]";
-    private static final String EDIT_User = "//div[@class=\"actionIcons\"]";
+    private static final String INPUT_NAME_XPATH = XPATH.NAME_XPATH.getText();
+    private static final String SELECT_TYPE_ID = XPATH.SELECT_TYPE.getText();
+    private static final String BUTTON_XPATH = XPATH.BUTTON_PATH.getText();
+    private static final String ROW_LOCATOR = XPATH.ROW_GET.getText();
+    private static final String EDIT_User = XPATH.EDIT_USER_VALUE.getText();
 
     private static final String LOGIN_WAIT = "3000";
     private static final String FILTER_WAIT = "1500";
 
     String generatedName = generateUniqueName(5);
-    String generatedNameEditUser = generateUniqueName(3);
     String generatedEmployeeId = generateUniqueEmployeeId();
-    String generatedEmployeeIdEditUser = generateUniqueEmployeeId();
     String generatedEmail = generateUniqueEmail();
     String generatedPhoneNumber = generateUniquePhoneNumber();
+
+    String generatedNameEditUser = generateUniqueName(3);
+    String generatedEmployeeIdEditUser = generateUniqueEmployeeId();
     String generatedPhoneNumberEditUser = generateUniquePhoneNumber();
 
     private void waitFor(String milliseconds) throws InterruptedException {
@@ -43,50 +46,50 @@ public class Soadmin {
         ChromeOptions chromeOptions = new ChromeOptions();
         WebDriverManager.chromedriver().setup();
         driver = new ChromeDriver(chromeOptions);
-        driver.get(DropdownOption.WEBSITE_URL.getText());
+        driver.get(PASSVALUE.WEBSITE_URL.getText());
         driver.manage().window().maximize();
         driver.manage().timeouts().implicitlyWait(5, TimeUnit.SECONDS);
     }
-    public void LogInPage() throws InterruptedException {
-        driver.findElement(By.xpath(String.format(INPUT_NAME_XPATH, "email"))).sendKeys(DropdownOption.EMAIL.getText());
-        driver.findElement(By.xpath(String.format(INPUT_NAME_XPATH, "password"))).sendKeys(DropdownOption.PASSWORD.getText());
-        driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,"Select User Type"))).click();
+    public void LogInPageCredentials() throws InterruptedException {
+        driver.findElement(By.xpath(String.format(INPUT_NAME_XPATH, XPATHVALUES.EMAIL.getText()))).sendKeys(PASSVALUE.EMAIL.getText());
+        driver.findElement(By.xpath(String.format(INPUT_NAME_XPATH, XPATHVALUES.PASSWORD.getText()))).sendKeys(PASSVALUE.PASSWORD.getText());
+        driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,XPATHVALUES.SELECT_USER.getText()))).click();
         Actions builder = new Actions(driver);
         builder.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
         waitFor(FILTER_WAIT);
-        driver.findElement(By.xpath(String.format(BUTTON_XPATH,"Login"))).click();
+        driver.findElement(By.xpath(String.format(BUTTON_XPATH,XPATHVALUES.LOGIN.getText()))).click();
         waitFor(LOGIN_WAIT);
     }
-    public void AddUsersDetails() throws InterruptedException {
-        driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,"Manage Users Accounts"))).click();
+    public void AddUserDetails() throws InterruptedException {
+        driver.findElement(By.xpath(String.format(SELECT_TYPE_ID, XPATHVALUES.CLICK_MANAGE_USER.getText()))).click();
         waitFor(FILTER_WAIT);
-        driver.findElement(By.xpath(String.format(BUTTON_XPATH,"Add New User"))).click();
+        driver.findElement(By.xpath(String.format(BUTTON_XPATH, XPATHVALUES.CLICK_ADD_USER.getText()))).click();
         waitFor(FILTER_WAIT);
-        String[] fields = {"name", "employeeId", "email", "phone"};
+        String[] fields = {XPATHVALUES.NAME.getText(),XPATHVALUES.EMPLOYEE_ID.getText(),XPATHVALUES.EMAIL.getText(),XPATHVALUES.PHONE.getText()};
         String[] values = {generatedName, generatedEmployeeId, generatedEmail, generatedPhoneNumber};
         for (int i = 0; i < fields.length; i++) {
             driver.findElement(By.xpath(String.format(INPUT_NAME_XPATH, fields[i]))).sendKeys(values[i]);
         }
     }
-    public void DepartmentSelect() throws InterruptedException {
-        driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,"Select Department"))).click();
+    public void SelectDepartmentDropdown() throws InterruptedException {
+        driver.findElement(By.xpath(String.format(SELECT_TYPE_ID, XPATHVALUES.SELECT_DEPARTMENT.getText()))).click();
         Actions builder = new Actions(driver);
         builder.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
         waitFor(FILTER_WAIT);
     }
-    public void SelectRole() throws InterruptedException {
-        driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,"Select role"))).click();
+    public void SelectRoleDropdown() throws InterruptedException {
+        driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,XPATHVALUES.SELECT_ROLE.getText()))).click();
         Actions builder = new Actions(driver);
         builder.sendKeys(Keys.ARROW_DOWN).sendKeys(Keys.ENTER).perform();
-        driver.findElement(By.xpath(String.format(BUTTON_XPATH,"Add"))).click();
+        driver.findElement(By.xpath(String.format(BUTTON_XPATH,XPATHVALUES.ADD_BUTTON.getText()))).click();
         waitFor(LOGIN_WAIT);
     }
     public void verifySuccessMessage( String expectedMessage) {
-        String actualMessage = driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,"User created successfully!"))).getText();
+        String actualMessage = driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,XPATHVALUES.VERIFY_USER_CREATED_MESSAGE.getText()))).getText();
         assertEquals("Expected message does not match!", expectedMessage, actualMessage);
     }
-    public void VerifyUser() throws InterruptedException {
-        driver.findElement(By.xpath(String.format(INPUT_NAME_XPATH, "search"))).sendKeys(generatedName);
+    public void VerifyAddUser() throws InterruptedException {
+        driver.findElement(By.xpath(String.format(INPUT_NAME_XPATH,XPATHVALUES.VERIFY_USER.getText()))).sendKeys(generatedName);
         waitFor(FILTER_WAIT);
         List<String> tableData = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
@@ -95,10 +98,10 @@ public class Soadmin {
         assertEquals("Username not match !", generatedName, tableData.get(0));
         assertEquals("EmployeeID not match !", generatedEmployeeId, tableData.get(1));
         assertEquals("Phone Number not match !", generatedPhoneNumber, tableData.get(5));
-        }
+    }
     public void EditUser() throws InterruptedException {
         driver.findElement(By.xpath(EDIT_User)).click();
-        String[] fields = {"name", "employeeId", "phone"};
+        String[] fields = {XPATHVALUES.NAME.getText(),XPATHVALUES.EMPLOYEE_ID.getText(),XPATHVALUES.PHONE.getText()};
         String[] values = {generatedNameEditUser, generatedEmployeeIdEditUser, generatedPhoneNumberEditUser};
         for (int i = 0; i < fields.length; i++) {
             WebElement element = driver.findElement(By.xpath(String.format(INPUT_NAME_XPATH, fields[i])));
@@ -106,15 +109,15 @@ public class Soadmin {
             waitFor(FILTER_WAIT);
             element.sendKeys(Keys.chord(Keys.CONTROL, "a"), values[i]);
         }
-        driver.findElement(By.xpath(String.format(BUTTON_XPATH,"Update"))).click();
+        driver.findElement(By.xpath(String.format(BUTTON_XPATH,XPATHVALUES.EDIT_USER.getText()))).click();
         waitFor(LOGIN_WAIT);
     }
     public void verifyUpdatedMessage( String expectedMessage) {
-        String actualMessage = driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,"User updated successfully!"))).getText();
+        String actualMessage = driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,XPATHVALUES.VERIFY_UPDATE_MESSAGE.getText()))).getText();
         assertEquals("Expected message does not match!", expectedMessage, actualMessage);
     }
     public void VerifyEditUser() throws InterruptedException {
-        driver.findElement(By.xpath(String.format(INPUT_NAME_XPATH, "search"))).sendKeys(generatedNameEditUser);
+        driver.findElement(By.xpath(String.format(INPUT_NAME_XPATH,XPATHVALUES.VERIFY_USER.getText()))).sendKeys(generatedNameEditUser);
         waitFor(FILTER_WAIT);
         List<String> tableData = new ArrayList<>();
         for (int i = 0; i < 9; i++) {
@@ -125,11 +128,11 @@ public class Soadmin {
         assertEquals("Phone Number not match !", generatedPhoneNumberEditUser, tableData.get(5));
     }
     public void UserStatus( String expectedMessage) throws InterruptedException {
-        driver.findElement(By.xpath(String.format(SELECT_TYPE_ID, "ACTIVE"))).click();
+        driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,XPATHVALUES.CLICK_ACTIVE_BUTTON.getText()))).click();
         waitFor(FILTER_WAIT);
-        driver.findElement(By.xpath(String.format(BUTTON_XPATH, "Agree"))).click();
+        driver.findElement(By.xpath(String.format(BUTTON_XPATH,XPATHVALUES.CLICK_AGREE_BUTTON.getText()))).click();
         waitFor(LOGIN_WAIT);
-        String actualMessage = driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,"Status updated successfully!"))).getText();
+        String actualMessage = driver.findElement(By.xpath(String.format(SELECT_TYPE_ID,XPATHVALUES.VERIFY_STATUS_MESSAGE.getText()))).getText();
         assertEquals("Expected message does not match!", expectedMessage, actualMessage);
     }
     public void VerifyUserStatus( String expectedMessage) throws InterruptedException {
@@ -141,26 +144,14 @@ public class Soadmin {
         assertEquals("Status not match !", expectedMessage, tableData.get(7));
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
     public String generateUniqueName(int length) {
-    String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
-    StringBuilder sb = new StringBuilder();
-    Random random = new Random();
-    for (int i = 0; i < length; i++) {
-        int index = random.nextInt(characters.length());
-        sb.append(characters.charAt(index));
-    }
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        StringBuilder sb = new StringBuilder();
+        Random random = new Random();
+        for (int i = 0; i < length; i++) {
+            int index = random.nextInt(characters.length());
+            sb.append(characters.charAt(index));
+        }
         return sb.toString();
     }
     private String generateUniqueEmployeeId() {
@@ -179,6 +170,11 @@ public class Soadmin {
     }
 
 }
+
+
+
+
+
 
 
 
