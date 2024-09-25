@@ -168,7 +168,6 @@ public class Soadmin {
         long randomNumber = 1000000000L + random.nextInt(900000000);
         return String.valueOf(randomNumber);
     }
-
 }
 
 
