@@ -6,7 +6,11 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.interactions.Actions;
 import java.time.Duration;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import Enum.Credential;
 import Enum.XPATHVALUES;
@@ -26,6 +30,7 @@ public class Hoadmin {
     private static final String FILTER_SELECT = XPATH.FILTER_VALUE_SELECT.getText();
     private static final String VERIFY_DATA = XPATH.TABLE_XATH.getText();
     private static final String APPLY_DATE_RANGE = XPATH.DATE_RANGE.getText();
+    private static final String START_DATE = XPATH.SELECT_DATES.getText();
     private static final String LOGIN_WAIT = "3000";
     private static final String FILTER_WAIT = "1500";
 
@@ -104,9 +109,13 @@ public class Hoadmin {
         WebElement dateRangeInput = driver.findElement(By.xpath(APPLY_DATE_RANGE));
         waitFor(FILTER_WAIT);
         dateRangeInput.click();
-        driver.findElement(By.cssSelector(".rdrDay:nth-child(1) > .rdrDayNumber")).click();
-        waitFor(FILTER_WAIT);
-        driver.findElement(By.cssSelector(".rdrDay:nth-child(19) > .rdrDayNumber")).click();
+        LocalDate startDate = generateRandomDate(30);
+        LocalDate endDate = startDate.plusDays(new Random().nextInt(10) + 1);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        List<String> formattedStartDate = Arrays.asList(startDate.format(formatter).split("/"));
+        List<String> formattedEndDate = Arrays.asList(endDate.format(formatter).split("/"));
+        driver.findElement(By.xpath(String.format(START_DATE, formattedStartDate.get(0).replace("0", "")))).click();
+        driver.findElement(By.xpath(String.format(START_DATE, formattedEndDate.get(0).replace("0", "")))).click();
         WebElement el = driver.findElement(By.xpath((String.format(INPUT_NAME_XPATH, XPATHVALUES.SEARCH.getText()))));
         Actions builder = new Actions(driver);
         builder.moveToElement(el).click(el);
@@ -121,6 +130,12 @@ public class Hoadmin {
             System.out.println(resultText + resultText);
         }
     }
+    private static LocalDate generateRandomDate(int days) {
+        LocalDate today = LocalDate.now();
+        Random random = new Random();
+        int randomDays = random.nextInt(days + 1);
+        return today.minusDays(randomDays);
+     }
 }
 
 
@@ -143,7 +158,7 @@ public class Hoadmin {
 
 
 
-    //Randonm Date Picker Method
+    //Random Date Picker Method
 //    private static final String START_DATE = "(//div[@class='rdrDays']//button)[%s]"; //XPATH
 //     public void ApplyDateRange() throws InterruptedException {
 //        WebElement dateRangeInput = driver.findElement(By.xpath(APPLY_DATE_RANGE));
@@ -160,7 +175,6 @@ public class Hoadmin {
 //        Actions builder = new Actions(driver);
 //        builder.moveToElement( el ).click( el );
 //        builder.perform();
-//
 //     }
 //     private static LocalDate generateRandomDate(int days) {
 //        LocalDate today = LocalDate.now();
@@ -168,59 +182,17 @@ public class Hoadmin {
 //        int randomDays = random.nextInt(days + 1);
 //        return today.minusDays(randomDays);
 //     }
-//
 
-
-
-
-
-
-
-
-
-//        List<WebElement> searchResultItems = driver.findElements(By.xpath(VERIFY_DATE_RANGE_DATA));
-//        waitFor(FILTER_WAIT);
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
-//        LocalDate startDate = LocalDate.parse("01-09-2024", formatter);
-//        LocalDate endDate = LocalDate.parse("19-09-2024", formatter);
-//        assertTrue("Not all dates are in the specified range",
-//                searchResultItems.stream()
-//                        .map(WebElement::getText)
-//                        .map(dateString -> LocalDate.parse(dateString, formatter))
-//                        .allMatch(date -> !date.isBefore(startDate) && !date.isAfter(endDate))
-//        );
-
-
-
-
-
-
-
-
-
-
-
-
-
+//        Specific Date Filter apply in DigiDoc Date Range
 //        public void ApplyDateRange() throws InterruptedException {
-//          WebElement dateRangeInput = driver.findElement(By.xpath(APPLY_DATE_RANGE));
-//          waitFor(FILTER_WAIT);
-//          dateRangeInput.click();
-//        LocalDate startDate = generateRandomDate(30);
-//        LocalDate endDate = startDate.plusDays(new Random().nextInt(10) + 1);
-//        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-//        String [] formattedStartDate = startDate.format(formatter).split("/");
-//        String[] formattedEndDate = endDate.format(formatter).split("/");
-
-//        dateRangeInput.clear();
-//        dateRangeInput.sendKeys(formattedStartDate + " - " + formattedEndDate);
+//        WebElement dateRangeInput = driver.findElement(By.xpath(APPLY_DATE_RANGE));
+//        waitFor(FILTER_WAIT);
+//        dateRangeInput.click();
+//        driver.findElement(By.cssSelector(".rdrDay:nth-child(1) > .rdrDayNumber")).click();
+//        waitFor(FILTER_WAIT);
+//        driver.findElement(By.cssSelector(".rdrDay:nth-child(19) > .rdrDayNumber")).click();
+//        WebElement el = driver.findElement(By.xpath((String.format(INPUT_NAME_XPATH, XPATHVALUES.SEARCH.getText()))));
+//        Actions builder = new Actions(driver);
+//        builder.moveToElement(el).click(el);
+//        builder.perform();
 //    }
-//    private static LocalDate generateRandomDate(int days) {
-//        LocalDate today = LocalDate.now();
-//        Random random = new Random();
-//        int randomDays = random.nextInt(days + 1);
-//        return today.minusDays(randomDays);
-//    }
-
-
-
